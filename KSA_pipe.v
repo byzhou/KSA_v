@@ -12,31 +12,37 @@ module KSA (s, a, b, c);
   input [BITS-1:0]  b;
   input             c;      // Carry in => set to 0 at input
 
-  output [BITS:0]   s;      // Sum output
+  output reg [BITS:0]   s;      // Sum output
 
   // PG wires:
-  wire [BITS-1:0]   Plvl[LEVELS:0], Glvl[LEVELS:0],carry;
+  reg [BITS-1:0]   Plvl[LEVELS:0], Glvl[LEVELS:0];
 
   // level 0 - Create PG-generators (red):
-  assign Plvl[0][BITS-1:0] = a^b;
-  assign Glvl[0][BITS-1:0] = a&b;
+  always @(*) begin
+        Plvl[0][BITS-1:0] = a^b;
+        Glvl[0][BITS-1:0] = a&b;
+  end
 
   // level 1 - END:
   genvar lvl;
   generate
     for (lvl = 1; lvl <= LEVELS; lvl = lvl + 1) begin
       // Create buffers (green)
-      assign Plvl[lvl][2**(lvl-1)-1:0] = Plvl[lvl-1][2**(lvl-1)-1:0];
-      assign Glvl[lvl][2**(lvl-1)-1:0] = Glvl[lvl-1][2**(lvl-1)-1:0];
+        always @ (*) begin
+            Plvl[lvl][2**(lvl-1)-1:0] = Plvl[lvl-1][2**(lvl-1)-1:0];
+            Glvl[lvl][2**(lvl-1)-1:0] = Glvl[lvl-1][2**(lvl-1)-1:0];
       // Create PG calculators (yellow)
-      assign Plvl[lvl][BITS-1:2**(lvl-1)] = Plvl[lvl-1][BITS-1:2**(lvl-1)] & Plvl[lvl-1][BITS-1 - 2**(lvl-1):0];
-      assign Glvl[lvl][BITS-1:2**(lvl-1)] = (Plvl[lvl-1][BITS-1:2**(lvl-1)] & Glvl[lvl-1][BITS-1 - 2**(lvl-1):0]) | Glvl[lvl-1][BITS-1:2**(lvl-1)];
+            Plvl[lvl][BITS-1:2**(lvl-1)] = Plvl[lvl-1][BITS-1:2**(lvl-1)] & Plvl[lvl-1][BITS-1 - 2**(lvl-1):0];
+            Glvl[lvl][BITS-1:2**(lvl-1)] = (Plvl[lvl-1][BITS-1:2**(lvl-1)] & Glvl[lvl-1][BITS-1 - 2**(lvl-1):0]) | Glvl[lvl-1][BITS-1:2**(lvl-1)];
+        end
     end
   endgenerate
   // At this point all the carries are stored in the Glvl[LEVELS][BITS-1:0]
 
   // Calculate sum by shifting the carries left by 1 bit:
-  assign s = {1'b0, Plvl[0]}^{Glvl[LEVELS], c};
+  always @(*) begin
+      s = {1'b0, Plvl[0]}^{Glvl[LEVELS], c};
+  end
   
 endmodule
 
