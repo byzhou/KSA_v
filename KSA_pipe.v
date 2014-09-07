@@ -15,7 +15,7 @@ module KSA (s, a, b, c);
   output [BITS:0]   s;      // Sum output
 
   // PG wires:
-  wire [BITS-1:0]   Plvl[LEVELS:0], Glvl[LEVELS:0];
+  wire [BITS-1:0]   Plvl[LEVELS:0], Glvl[LEVELS:0],carry;
 
   // level 0 - Create PG-generators (red):
   assign Plvl[0][BITS-1:0] = a^b;
@@ -37,6 +37,7 @@ module KSA (s, a, b, c);
 
   // Calculate sum by shifting the carries left by 1 bit:
   assign s = {1'b0, Plvl[0]}^{Glvl[LEVELS], c};
+  
 endmodule
 
 
@@ -83,7 +84,7 @@ module REGS (Q, D, clk);
 
 	genvar i;
 	generate
-		for (i = 0; i < BITS; i = i + 1) begin
+		for (i = 0; i < BITS; i = i + 1) begin : register_generation
 			REG RR (Q[i], D[i], clk);
 		end
 
