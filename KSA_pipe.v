@@ -24,7 +24,7 @@ module KSA (s, a, b, c);
   // level 1 - END:
   genvar lvl;
   generate
-    for (lvl = 1; lvl <= LEVELS; lvl = lvl + 1) begin
+    for (lvl = 1; lvl <= LEVELS; lvl = lvl + 1) begin :gen_KSA
       // Create buffers (green)
       assign Plvl[lvl][2**(lvl-1)-1:0] = Plvl[lvl-1][2**(lvl-1)-1:0];
       assign Glvl[lvl][2**(lvl-1)-1:0] = Glvl[lvl-1][2**(lvl-1)-1:0];
@@ -83,7 +83,7 @@ module REGS (Q, D, clk);
 
 	genvar i;
 	generate
-		for (i = 0; i < BITS; i = i + 1) begin
+		for (i = 0; i < BITS; i = i + 1) begin : reg_gen
 			REG RR (Q[i], D[i], clk);
 		end
 
