@@ -1,11 +1,11 @@
 
 module KSA (s, a, b, c);
   // BITS specifies how many bits should be in the adder
-  parameter BITS = 64;
+  parameter BITS = 16;
   // LEVELS shows how many levels are there in the adder.
   // *IMPORTANT*:
   // !!!    LEVELS = floor(log2(BITS))   !!!
-  parameter LEVELS = 6;
+  parameter LEVELS = 4;
 
   // IO's
   input [BITS-1:0]  a;
@@ -41,8 +41,8 @@ endmodule
 
 
 module KSA_pipe(s, a, b, c, clk);
-	parameter BITS = 64;
-	parameter LEVELS = 6;
+	parameter BITS = 16;
+	parameter LEVELS = 4;
 
 	// IO's
 	input [BITS-1:0]	a;
@@ -76,7 +76,7 @@ module KSA_pipe(s, a, b, c, clk);
 endmodule
 
 module REGS (Q, D, clk);
-	parameter BITS = 64;
+	parameter BITS = 16;
 	input [BITS-1:0]	D;
 	input				clk;
 	output [BITS-1:0]	Q;
